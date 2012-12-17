@@ -15,7 +15,25 @@
   <script type="text/javascript">
     $(document).ready(function(){
       $("a").click(function(){
-        $("a[name]").css("background", "#eee" );
+        for(x in this)
+        {
+          console.log( x, this[x] );
+        }
+        console.log(this[name]);
+        $(this).css("background", "#bbbbee" );
+      });
+
+      $(".button").click(function(){
+        var input_string = $("input#posttext");
+        console.log(input_string);
+        $.ajax({
+          type: "POST",
+          data: { textfield : "asdf" },
+          success: function(data){
+            console.log(data);
+            $('#footer').html(data).hide().fadeIn(1500);
+          },
+        });
       });
     });
   </script>
@@ -25,9 +43,9 @@
 
 <body>
   % for item in pages:
-  <div class="wrapper">
+  <div class="wrapper" id="Post${item.id}">
     <div class="postheader">
-        <a name=${item.id}>${item.id}</a>
+        <a name="${item.id}">${item.id}</a>
     </div>
     ${item.formatted_text or u'' | n}
   </div>
@@ -35,8 +53,9 @@
 
   <div class="postform">
     <form action="" method="post">
-      <textarea name="body" rows="10" cols="60"></textarea>
+      <textarea name="body" rows="10" id="posttext"></textarea>
       <input type="submit" name="form.submitted" value="Post"/>
+      <input class="button" type="button" value="test"/>
     </form>
   </div>
 
