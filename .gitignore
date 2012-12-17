@@ -1,0 +1,5 @@
+
+/hellboard.egg-info
+/hellboard.sqlite
+*.pyc
+/hellboard/templates/var
