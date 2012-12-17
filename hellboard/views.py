@@ -21,7 +21,7 @@ def format_post(text):
     text = re.sub(r'\r\n', r'\\r\\n', text)
     text = unicode(escape(text))
     text = re.sub(r'\\r\\n', r'<br/>', text)
-    text = re.sub(r'(.*?)(&gt;&gt;)([\d]*)(.*?)', r'\1<a href = "/#\3">\2\3</a>\4', text)
+    text = re.sub(r'(.*?)(&gt;&gt;)([\d]+)(.*?)', r'\1<a href = "/#\3">\2\3</a>\4', text)
     text = re_match_urls.sub(lambda x: u'<a href="%(url)s">%(url)s</a>' % dict(url=unicode(x.group())), text)    
     return text
 

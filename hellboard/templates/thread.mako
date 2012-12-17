@@ -24,24 +24,22 @@
 </head>
 
 <body>
+  % for item in pages:
+  <div class="wrapper">
+    <div class="postheader">
+        <a name=${item.id}>${item.id}</a>
+    </div>
+    ${item.formatted_text or u'' | n}
+  </div>
+  % endfor
 
-    <section>
+  <div class="postform">
+    <form action="" method="post">
+      <textarea name="body" rows="10" cols="60"></textarea>
+      <input type="submit" name="form.submitted" value="Post"/>
+    </form>
+  </div>
 
-      % for item in pages:
-      <div class="wrapper">
-              <div class="ribbon-wrapper-green"><div class="ribbon-green"><a name=${item.id}>${item.id}</a></div></div>
-              ${item.formatted_text or u'' | n}
-      </div>
-      % endfor
-
-      <div class="postform">
-        <form action="" method="post">
-          <textarea name="body" rows="10" cols="60"></textarea>
-          <input type="submit" name="form.submitted" value="Post"/>
-        </form>
-      </div>
-
-    </section>
   <footer id = "footer">
   </footer>
 

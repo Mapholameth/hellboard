@@ -44,7 +44,25 @@ div.postbody
 
 div.postheader
 {
-    background-color: #a5d796;
+  padding-left: 5px;
+  font: bold 15px Sans-Serif;
+  color: #333;
+  text-align: left;
+  text-shadow: rgba(255,255,255,0.5) 0px 1px 0px;
+  position: relative;  
+  top: -5px;
+  left: -5px;
+  width: 100%;
+  background-color: #BFDC7A;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#BFDC7A), to(#8EBF45)); 
+  background-image: -webkit-linear-gradient(top, #BFDC7A, #8EBF45); 
+  background-image:    -moz-linear-gradient(top, #BFDC7A, #8EBF45); 
+  background-image:     -ms-linear-gradient(top, #BFDC7A, #8EBF45); 
+  background-image:      -o-linear-gradient(top, #BFDC7A, #8EBF45); 
+  color: #6a6340;
+  -webkit-box-shadow: 0px 0px 3px rgba(0,0,0,0.3);
+  -moz-box-shadow:    0px 0px 3px rgba(0,0,0,0.3);
+  box-shadow:         0px 0px 3px rgba(0,0,0,0.3);
 }
 
 div.header
@@ -66,7 +84,7 @@ div.postform
 }
 
 .wrapper {
-    padding-right: 50px;    
+    padding-right: 0px;    
     padding-left: 5px;
     padding-bottom: 5px;
     padding-top: 5px;
@@ -74,13 +92,13 @@ div.postform
     width: 50%;
     margin-left:auto;
     margin-right:auto;
-    min-height: 100px;
+    min-height: 20px;
 
     margin-top: 10px 5%;
     margin-bottom: 10px 5%;  
 
     background: white;
-    border-radius: 10px;
+    border-radius: 5px;
     -webkit-box-shadow: 0px 0px 8px rgba(0,0,0,0.3);
     -moz-box-shadow:    0px 0px 8px rgba(0,0,0,0.3);
     box-shadow:         0px 0px 8px rgba(0,0,0,0.3);
@@ -176,30 +194,6 @@ div.postform
     border-right:10px solid blue; 
 }
 
-.blood {
-       color:silver;
-       text-shadow:
-       4px 4px 1px #300000,
-       4px 6px 1px #400000,
-       4px 8px 1px #500000,
-       4px 10px 1px #600000,
-       4px 12px 1px #700000,
-       4px 14px 1px #800000,
-       4px 16px 1px #900000,
-       4px 18px 1px #A00000,
-       4px 20px 1px #B00000,
-       4px 22px 1px #C00000,
-       4px 24px 1px #D00000,
-       4px 26px 1px #E00000,
-       4px 28px 1px #F00000,
-       4px 30px 1px #FA0000,
-       4px 32px 1px #FB0000,
-       4px 34px 1px #FC0000,
-       4px 36px 1px #FD0000,
-       4px 38px 1px #FE0000,
-       4px 40px 2px #FF0000;
-}
-
 .loader {
     text-align: center;    
 }
@@ -249,4 +243,10 @@ div.postform
     opacity: 0.1;
     -moz-transform: translateY(-21px);
   }
+}
+
+textarea {
+    margin-right:auto;
+    margin-left:auto;
+    width:100%;
 }
