@@ -30,14 +30,46 @@
 
     $(document).ready(function(){
 
+      $("a").addClass("postref");
+
+      var postAnswers = {};
+
+      $("a:regex(href,^/#\\d+$)").each(function(index, element){
+        var pat1 = new RegExp("^/#(\\d+)$");
+        var pat2 = new RegExp("^Post(\\d+)$");
+        var id = pat1.exec($(this).attr("href"))[1];
+        var parentId = pat2.exec($(this).parent().attr("id"))[1];
+
+        if ( postAnswers[id] == undefined )
+          postAnswers[id] = {};
+        postAnswers[id][parentId] = true;
+      });
+
+      for (var k in postAnswers)
+      {
+        var post = $(":regex(id,^Post" + k + "$)");
+        post.append("<br/>");
+        for (var j in postAnswers[k])
+        {
+          post.append("<a class = \"answerref\" href = \"/#" + j + "\">&gt;&gt;" + j  + "</a> ");
+        }
+      }      
+
+      //console.log(postAnswers);
+
       $("a:regex(href,^/#\\d+$)").click(function(){
         var href = $(this).attr("href");
         var pat = new RegExp("^/#(\\d+)$");
         var id = pat.exec(href);
         var post = $(":regex(id,^Post" + id[1] + "$)");
+        post.clearQueue();
+        post.animate({ "background-color" : "#ffffff" }, 10);
+        post.animate({ "background-color" : "#bbbbee" }, 50);
         post.animate({ "background-color" : "#ffffff" }, 50);
-        post.animate({ "background-color" : "#bbbbee" }, 200);
-        post.animate({ "background-color" : "#ffffff" }, 200);
+        post.animate({ "background-color" : "#bbbbee" }, 50);
+        post.animate({ "background-color" : "#ffffff" }, 50);
+        post.animate({ "background-color" : "#bbbbee" }, 50);
+        post.animate({ "background-color" : "#ffffff" }, 50);
       });
 
     });
