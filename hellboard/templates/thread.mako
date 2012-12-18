@@ -60,6 +60,11 @@
         var pat = new RegExp("^/#(\\d+)$");
         var id = pat.exec(href)[1];
         var post = $(":regex(id,^Post" + id + "$)");
+        if (!post.is(":visible"))
+        {
+          $(post).show();
+        }            
+
         post.clearQueue();
         post.animate({ "background-color" : "#ffffff" }, 10);
         post.animate({ "background-color" : "#bbbbee" }, 50);
@@ -69,6 +74,8 @@
         post.animate({ "background-color" : "#bbbbee" }, 50);
         post.animate({ "background-color" : "#ffffff" }, 50);
       });
+
+
 
       $("a.answerref").click(function(){
         var href = $(this).attr("href");
@@ -118,9 +125,7 @@
             var offset = 20;
             if (!$(this).is(":visible"))
             {
-              console.log($(that).position());
-              console.log($(that).offset());
-              offset += $(that).position().left - 400;//$(that).attr("left");
+              offset += $(that).position().left - 400;
             }
             $(this).show();
             $(this).animate({ "left" : offset + "px" }, 50);
