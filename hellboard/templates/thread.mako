@@ -125,9 +125,10 @@
             var offset = 20;
             if (!$(this).is(":visible"))
             {
-              offset += $(that).position().left - 400;
+              offset += parseInt($(that).css("left"));
             }
             $(this).show();
+            $(this).clearQueue();
             $(this).animate({ "left" : offset + "px" }, 50);
 
             $(this).animate({ "background-color" : "#ffffff" }, 10);
