@@ -264,3 +264,46 @@ a.answerref {
   font-size: 10px;
   color: #6a6340;
 }
+
+div.emptyArea {
+  position:absolute;
+  top:0;
+  left:0;
+  width:100px;
+  height:100%;
+}
+
+ body{
+  margin:0;
+  padding:0 0 0 <length>;
+ }
+ div#leftSidebar{
+  position:absolute;
+  top:0;
+  left:0;
+  width:20%;
+  height:100%;
+  background-color: #BFDC7A;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#BFDC7A), to(#8EBF45)); 
+  background-image: -webkit-linear-gradient(top, #BFDC7A, #8EBF45); 
+  background-image:    -moz-linear-gradient(top, #BFDC7A, #8EBF45); 
+  background-image:     -ms-linear-gradient(top, #BFDC7A, #8EBF45); 
+  background-image:      -o-linear-gradient(top, #BFDC7A, #8EBF45); 
+  color: #6a6340;
+  -webkit-box-shadow: 0px 0px 3px rgba(0,0,0,0.3);
+  -moz-box-shadow:    0px 0px 3px rgba(0,0,0,0.3);
+  box-shadow:         0px 0px 3px rgba(0,0,0,0.3);
+
+ }
+ @media screen{
+  body>div#leftSidebar{
+   position:fixed;
+  }
+ }
+ * html body{
+  overflow:hidden;
+ } 
+ * html div#content{
+  height:100%;
+  overflow:auto;
+ }

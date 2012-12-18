@@ -53,9 +53,7 @@
         {
           post.append("<a class = \"answerref\" href = \"/#" + j + "\">&gt;&gt;" + j  + "</a> ");
         }
-      }      
-
-      //console.log(postAnswers);
+      }
 
       $("a.postref:regex(href,^/#\\d+$)").click(function(){
         var href = $(this).attr("href");
@@ -87,6 +85,66 @@
         post.animate({ "background-color" : "#ffffff" }, 50);
       });
 
+      $(".wrapper").click(function(){
+        var pat2 = new RegExp("^Post(\\d+)$");
+        var id = pat2.exec($(this).attr("id"))[1];
+
+        if(!postAnswers[id])
+          return;
+
+        var that = this;     
+
+        var minId = parseInt(id);
+        var maxId = parseInt(id);
+        for (var k in postAnswers[id])
+        {
+            if (parseInt(k) < minId)
+              minId = k;
+            if (parseInt(k) > maxId)
+              maxId = k;
+        };
+
+        $(".wrapper").each(function(){
+          var id2 = pat2.exec($(this).attr("id"))[1];
+          if(!postAnswers[id][id2] && this!=that)
+          {
+            if (parseInt(id2) > parseInt(minId) && parseInt(id2) < parseInt(maxId))
+            {
+              $(this).hide();
+            }
+          }
+          else if ( this != that )
+          {
+            var offset = 20;
+            if (!$(this).is(":visible"))
+            {
+              console.log($(that).position());
+              console.log($(that).offset());
+              offset += $(that).position().left - 400;//$(that).attr("left");
+            }
+            $(this).show();
+            $(this).animate({ "left" : offset + "px" }, 50);
+
+            $(this).animate({ "background-color" : "#ffffff" }, 10);
+            $(this).animate({ "background-color" : "#eebbbb" }, 50);
+            $(this).animate({ "background-color" : "#ffffff" }, 50);
+            $(this).animate({ "background-color" : "#eebbbb" }, 50);
+            $(this).animate({ "background-color" : "#ffffff" }, 50);
+            $(this).animate({ "background-color" : "#eebbbb" }, 50);
+            $(this).animate({ "background-color" : "#ffffff" }, 50);
+
+          }
+        });
+      });
+
+      $("#leftSidebar").click(function(){
+          $(".wrapper").each(function(){
+            $(this).show();
+            $(this).animate({ "left" : "0px" }, 50);
+          });
+
+      });
+
     });
   </script>
 
@@ -94,14 +152,18 @@
 </head>
 
 <body>
-  % for item in pages:
-  <div class="wrapper" id="Post${item.id}">
-    <div class="postheader">
-        <a name="${item.id}">${item.id}</a>
+
+  <div id="leftSidebar"></div>
+  <div id="content">
+    % for item in pages:
+    <div class="wrapper" id="Post${item.id}">
+      <div class="postheader">
+          <a name="${item.id}">${item.id}</a>
+      </div>
+      ${item.formatted_text or u'' | n}
     </div>
-    ${item.formatted_text or u'' | n}
-  </div>
-  % endfor
+    % endfor    
+  </div>  
 
   <div class="postform">
     <form action="" method="post">
