@@ -11,30 +11,35 @@
   <title>Your Website</title>
 
   <script type="text/javascript" src="${request.static_url('hellboard:static/jquery.js')}"></script>
+  <script type="text/javascript" src="${request.static_url('hellboard:static/jquery.color.js')}"></script>
 
   <script type="text/javascript">
+
+    jQuery.expr[':'].regex = function(elem, index, match) {
+      var matchParams = match[3].split(','),
+          validLabels = /^(data|css):/,
+          attr = {
+              method: matchParams[0].match(validLabels) ? 
+                          matchParams[0].split(':')[0] : 'attr',
+              property: matchParams.shift().replace(validLabels,'')
+          },
+          regexFlags = 'ig',
+          regex = new RegExp(matchParams.join('').replace(/^\s+|\s+$/g,''), regexFlags);
+      return regex.test(jQuery(elem)[attr.method](attr.property));
+    }
+
     $(document).ready(function(){
-      $("a").click(function(){
-        for(x in this)
-        {
-          console.log( x, this[x] );
-        }
-        console.log(this[name]);
-        $(this).css("background", "#bbbbee" );
+
+      $("a:regex(href,^/#\\d+$)").click(function(){
+        var href = $(this).attr("href");
+        var pat = new RegExp("^/#(\\d+)$");
+        var id = pat.exec(href);
+        var post = $(":regex(id,^Post" + id[1] + "$)");
+        post.animate({ "background-color" : "#ffffff" }, 50);
+        post.animate({ "background-color" : "#bbbbee" }, 200);
+        post.animate({ "background-color" : "#ffffff" }, 200);
       });
 
-      $(".button").click(function(){
-        var input_string = $("input#posttext");
-        console.log(input_string);
-        $.ajax({
-          type: "POST",
-          data: { textfield : "asdf" },
-          success: function(data){
-            console.log(data);
-            $('#footer').html(data).hide().fadeIn(1500);
-          },
-        });
-      });
     });
   </script>
 
