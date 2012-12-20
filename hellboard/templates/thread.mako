@@ -2,31 +2,26 @@
 <html>
 <head>
   <title>threads</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+  <meta http-equiv="Content-Type"
+        content="text/html; charset=UTF-8"/>
+
   <link rel="shortcut icon"
-        href="${request.static_url('hellboard:static/favicon.ico')}" />
+        href="${request.static_url('hellboard:static/favicon.ico')}"/>
+
   <link rel="stylesheet"
         href="${request.static_url('hellboard:static/chugun.css')}"
-        type="text/css" media="screen" charset="utf-8" />
-  <title>Your Website</title>
+        type="text/css"
+        media="screen"
+        charset="utf-8"/>
 
-  <script type="text/javascript" src="${request.static_url('hellboard:static/jquery.js')}"></script>
-  <script type="text/javascript" src="${request.static_url('hellboard:static/jquery.color.js')}"></script>
+  <script type="text/javascript"
+          src="${request.static_url('hellboard:static/jquery.js')}"></script>
+
+  <script type="text/javascript"
+          src="${request.static_url('hellboard:static/jquery.color.js')}"></script>
 
   <script type="text/javascript">
-
-    jQuery.expr[':'].regex = function(elem, index, match) {
-      var matchParams = match[3].split(','),
-          validLabels = /^(data|css):/,
-          attr = {
-              method: matchParams[0].match(validLabels) ? 
-                          matchParams[0].split(':')[0] : 'attr',
-              property: matchParams.shift().replace(validLabels,'')
-          },
-          regexFlags = 'ig',
-          regex = new RegExp(matchParams.join('').replace(/^\s+|\s+$/g,''), regexFlags);
-      return regex.test(jQuery(elem)[attr.method](attr.property));
-    }
 
     var HighlightPost = function(post)
     {
@@ -56,21 +51,23 @@
 
     var FocusOnPost = function(id1, id2) // id1 refers to see id2
     {
-      var post1 = $(".wrapper:regex(id,^Post" + id1 + "$)");
-      var post2 = $(".wrapper:regex(id,^Post" + id2 + "$)");
+      var post1 = $(".post#post-" + id1);
+      var post2 = $(".post#post-" + id2);
       var idMin = Math.min(id1, id2);
       var idMax = Math.max(id1, id2);
       var minPost = post1;
       var maxPost = post2;
+
       if (idMin == id2)
       {
         minPost = post2;
         maxPost = post1;
       }
+
       var hiddenCount = 0
-      $(".wrapper").each(function(){
-        var pat = new RegExp("^Post(\\d+)$");
-        var id = parseInt(pat.exec($(this).attr("id"))[1]);
+
+      $(".post").each(function(){
+        var id = parseInt($(this).attr("data-id"));
         if (idMin < id && id < idMax)
           if ($(this).is(":visible"))
           {
@@ -83,137 +80,126 @@
             hiddenCount++;
           }
       });
+
       if (hiddenCount > 0)
       {
-        var prevPost = $(maxPost).parent().children().eq(maxPost.index() - 1);
-        var nextPost = $(maxPost).parent().children().eq(maxPost.index() + 1);
-        if (prevPost.attr("class") == "hiddenPosts")
-          alert("hpost neiught");
-        var hiddenPosts = $("<div unselectable=\"on\" class=\"hiddenPosts\">Show hidden posts(" + hiddenCount + ")</div>")
-        hiddenPosts.insertBefore(maxPost);
-        hiddenPosts.click(hiddenPostClickHandler);        
+        // var prevPost = $(maxPost).parent().children().eq(maxPost.index() - 1);
+        // var nextPost = $(maxPost).parent().children().eq(maxPost.index() + 1);
+        // if (prevPost.attr("class") == "posts-hidden")
+        //   alert("hpost neiught");
+        //var hiddenPosts = $('<div unselectable="on" class="posts-hidden">Show hidden posts(' + hiddenCount + ')</div>')
+        //hiddenPosts.insertBefore(maxPost);
+        //hiddenPosts.click(hiddenPostClickHandler);
       }
 
       if (!post2.is(":visible"))
         post2.slideToggle(200);
+
       var offset = 20;
       if (minPost.css("left") != "auto")
         offset += parseInt(minPost.css("left"));
+
       maxPost.animate({ "left" : offset + "px" }, 50);
       HighlightPost(post2);
     }
 
     $(document).ready(function(){
 
-      $("a:regex(href,^/#\\d+$)").addClass("postref");
+      $("a.post-link").addClass("up-link");
 
-      var postAnswers = {};
+      var postDownLinks = {};
 
-      $("a:regex(href,^/#\\d+$)").each(function(index, element){
-        var pat1 = new RegExp("^/#(\\d+)$");
-        var pat2 = new RegExp("^Post(\\d+)$");
-        var id = parseInt(pat1.exec($(this).attr("href"))[1]);
-        var parentId = parseInt(pat2.exec($(this).parent().attr("id"))[1]);
+      $("a.up-link").each(function(index, element){
+        var targetId = parseInt($(this).attr("data-target-id"))
+        var parentId = parseInt($(this).attr("data-parent-id"))
 
-        if ( postAnswers[id] == undefined )
-          postAnswers[id] = {};
-        postAnswers[id][parentId] = true;
+        if ( postDownLinks[targetId] == undefined )
+          postDownLinks[targetId] = {};
+
+        postDownLinks[targetId][parentId] = true;
       });
 
-      for (var k in postAnswers)
+      for (var k in postDownLinks)
       {
-        var post = $(":regex(id,^Post" + k + "$)");
-        post.append("<br/>");
-        for (var j in postAnswers[k])
+        var post = $('.post#post-' + k )
+        for (var j in postDownLinks[k])
         {
-          post.append("<a class = \"answerref\" href = \"/#" + j + "\">&gt;&gt;" + j  + "</a> ");
+          var link = $('<a href = "/#' + j + '">&gt;&gt;' + j + "</a>")
+            .addClass("post-link")
+            .addClass("down-link")
+            .attr("data-parent-id", k)
+            .attr("data-target-id", j)
+          post.append(link);
+          post.append(" ");
         }
       }
 
-      $("a.postref:regex(href,^/#\\d+$)").click(function(e){
-        var href = $(this).attr("href");
-        var pat = new RegExp("^/#(\\d+)$");
-        var id = pat.exec(href)[1];
-        var post = $(":regex(id,^Post" + id + "$)");
-        var pat2 = new RegExp("^Post(\\d+)$");
-        var parentId = pat2.exec($(this).parent().attr("id"))[1];        
-        post.clearQueue();
-        FocusOnPost(parseInt(parentId), parseInt(id));
+      $("a.post-link").click(function(e){
+        var targetId = parseInt($(this).attr("data-target-id"))
+        var parentId = parseInt($(this).attr("data-parent-id"))
+        FocusOnPost(parentId, targetId);
         e.stopPropagation();
-        e.preventDefault();        
-      });
-
-      $("a.answerref").click(function(e){
-        var href = $(this).attr("href");
-        var pat = new RegExp("^/#(\\d+)$");
-        var id = pat.exec(href)[1];
-        var post = $(":regex(id,^Post" + id + "$)");
-        post.clearQueue();
-        var pat2 = new RegExp("^Post(\\d+)$");
-        var parentId = pat2.exec($(this).parent().attr("id"))[1];        
-        FocusOnPost(parseInt(parentId), parseInt(id));
         e.preventDefault();
-        e.stopPropagation();
       });
 
-      $(".wrapper").click(function(){
-        return;
-        var pat2 = new RegExp("^Post(\\d+)$");
-        var id = parseInt(pat2.exec($(this).attr("id"))[1]);
+      // $(".post").click(function(){
+      //   return;
+      //   var pat2 = new RegExp("^Post(\\d+)$");
+      //   var id = parseInt(pat2.exec($(this).attr("id"))[1]);
 
-        if(!postAnswers[id])
-          return;
+      //   if(!postDownLinks[id])
+      //     return;
 
-        var that = this;
-        var postAnswerIds = [];
-        for (var k in postAnswers[id])
-          postAnswerIds.push(k);
-        postAnswerIds.sort(function (a, b){
-          return (b - a);
-        });
-        for (var i = 0; i < postAnswerIds.length; i++)
-        {
-          FocusOnPost(id, postAnswerIds[ i ]);
-        }
+      //   var that = this;
+      //   var postAnswerIds = [];
+      //   for (var k in postDownLinks[id])
+      //     postAnswerIds.push(k);
+      //   postAnswerIds.sort(function (a, b){
+      //     return (b - a);
+      //   });
+      //   for (var i = 0; i < postAnswerIds.length; i++)
+      //   {
+      //     FocusOnPost(id, postAnswerIds[ i ]);
+      //   }
 
-        /*
-        var minId = parseInt(id);
-        var maxId = parseInt(id);
-        for (var k in postAnswers[id])
-        {
-            if (parseInt(k) < minId)
-              minId = k;
-            if (parseInt(k) > maxId)
-              maxId = k;
-        };
+      //   /*
+      //   var minId = parseInt(id);
+      //   var maxId = parseInt(id);
+      //   for (var k in postDownLinks[id])
+      //   {
+      //       if (parseInt(k) < minId)
+      //         minId = k;
+      //       if (parseInt(k) > maxId)
+      //         maxId = k;
+      //   };
 
-        $(".wrapper").each(function(){
-          var id2 = pat2.exec($(this).attr("id"))[1];
-          if(!postAnswers[id][id2] && this!=that)
-          {
-            if (parseInt(id2) > parseInt(minId) && parseInt(id2) < parseInt(maxId))
-            {
-              if ($(this).is(":visible"))
-                $(this).slideToggle(200);
-            }
-          }
-          else if ( this != that )
-          {
-            var offset = 20;
-            if ($(that).css("left") != "auto")
-              offset += parseInt($(that).css("left"));
-            if (!$(this).is(":visible"))
-              $(this).slideToggle(200);//.hide();
-            $(this).clearQueue();
-            $(this).animate({ "left" : offset + "px" }, 50);
-            HighlightPost($(this));
-          }
-        });
-        */
-      });
+      //   $(".post").each(function(){
+      //     var id2 = pat2.exec($(this).attr("id"))[1];
+      //     if(!postDownLinks[id][id2] && this!=that)
+      //     {
+      //       if (parseInt(id2) > parseInt(minId) && parseInt(id2) < parseInt(maxId))
+      //       {
+      //         if ($(this).is(":visible"))
+      //           $(this).slideToggle(200);
+      //       }
+      //     }
+      //     else if ( this != that )
+      //     {
+      //       var offset = 20;
+      //       if ($(that).css("left") != "auto")
+      //         offset += parseInt($(that).css("left"));
+      //       if (!$(this).is(":visible"))
+      //         $(this).slideToggle(200);//.hide();
+      //       $(this).clearQueue();
+      //       $(this).animate({ "left" : offset + "px" }, 50);
+      //       HighlightPost($(this));
+      //     }
+      //   });
+      //   */
+      // });
 
-      $("#leftSidebar").click(function(){
-        $(".wrapper").each(function(){
+      $("#left-sidebar").click(function(){
+        $(".post").each(function(){
           if (!$(this).is(":visible"))
             $(this).slideToggle(200);//.hide();          
           //$(this).show();
@@ -221,28 +207,38 @@
         });
       });
 
-      $("a.PostAnchor").click(function(){
+      $("a.post-anchor").click(function(){
         $("textarea[name=body]").append(">>" + $(this).html() + " ");
         window.location.href='/#footer';
+      });
+
+      $("#reformat-posts").click(function(e){
+        $('<form action="/#footer" method="POST">' + 
+          '<input type="hidden" name="reformat-posts" value="">' +
+          '</form>').submit();
       });
 
     });
   </script>
 
+  <title>Your Website</title>
 
 </head>
 
 <body>
 
-  <div id="leftSidebar">
+  <div id="left-sidebar">
   </div>
+
   <div id="content">
     % for item in pages:
-    <div class="wrapper" id="Post${item.id}">
-      <div class="postheader">
-          <a class="PostAnchor" name="${item.id}">${item.id}</a>
+    <div class="post" id="post-${item.id}" data-id="${item.id}">
+      <div class="post-header">
+          <a class="post-anchor" name="${item.id}">${item.id}</a>
       </div>
-      ${item.formatted_text or u'' | n}
+      <div class="post-content">
+        ${item.formatted_text or u'' | n}
+      </div>
     </div>
     % endfor
   </div>
@@ -251,11 +247,11 @@
     <form action="" method="post">
       <textarea name="body" rows="10" id="posttext"></textarea>
       <input type="submit" name="form.submitted" value="Post"/>
-      <input class="button" type="button" value="test"/>
+      <input class="button" type="button" id="reformat-posts" name="reformat-posts" value="Reformat posts"/>
     </form>
   </div>
 
-  <footer id = "footer">
+  <footer id="footer">
   </footer>
 
 </body>
