@@ -53,6 +53,10 @@
     {
       var post1 = $(".post#post-" + id1);
       var post2 = $(".post#post-" + id2);
+
+      if (post1.length == 0 || post2.length == 0)
+        return
+
       var idMin = Math.min(id1, id2);
       var idMax = Math.max(id1, id2);
       var minPost = post1;
@@ -75,7 +79,7 @@
               if (hiddenCount == 0)
               {
                 window.location.href="/#" + id2;
-              }                
+              }
             });
             hiddenCount++;
           }
@@ -87,9 +91,16 @@
         // var nextPost = $(maxPost).parent().children().eq(maxPost.index() + 1);
         // if (prevPost.attr("class") == "posts-hidden")
         //   alert("hpost neiught");
-        //var hiddenPosts = $('<div unselectable="on" class="posts-hidden">Show hidden posts(' + hiddenCount + ')</div>')
-        //hiddenPosts.insertBefore(maxPost);
-        //hiddenPosts.click(hiddenPostClickHandler);
+        var hiddenPosts = $('<div unselectable="on" class="posts-hidden" data-min-id="'
+                            + idMin
+                            + '" data-max-id="'
+                            + idMax
+                            + '">'
+                            + 'Show hidden posts('
+                            + hiddenCount
+                            + ')</div>')
+        hiddenPosts.insertBefore(maxPost);
+        hiddenPosts.click(hiddenPostClickHandler);
       }
 
       if (!post2.is(":visible"))
@@ -142,67 +153,10 @@
         e.preventDefault();
       });
 
-      // $(".post").click(function(){
-      //   return;
-      //   var pat2 = new RegExp("^Post(\\d+)$");
-      //   var id = parseInt(pat2.exec($(this).attr("id"))[1]);
-
-      //   if(!postDownLinks[id])
-      //     return;
-
-      //   var that = this;
-      //   var postAnswerIds = [];
-      //   for (var k in postDownLinks[id])
-      //     postAnswerIds.push(k);
-      //   postAnswerIds.sort(function (a, b){
-      //     return (b - a);
-      //   });
-      //   for (var i = 0; i < postAnswerIds.length; i++)
-      //   {
-      //     FocusOnPost(id, postAnswerIds[ i ]);
-      //   }
-
-      //   /*
-      //   var minId = parseInt(id);
-      //   var maxId = parseInt(id);
-      //   for (var k in postDownLinks[id])
-      //   {
-      //       if (parseInt(k) < minId)
-      //         minId = k;
-      //       if (parseInt(k) > maxId)
-      //         maxId = k;
-      //   };
-
-      //   $(".post").each(function(){
-      //     var id2 = pat2.exec($(this).attr("id"))[1];
-      //     if(!postDownLinks[id][id2] && this!=that)
-      //     {
-      //       if (parseInt(id2) > parseInt(minId) && parseInt(id2) < parseInt(maxId))
-      //       {
-      //         if ($(this).is(":visible"))
-      //           $(this).slideToggle(200);
-      //       }
-      //     }
-      //     else if ( this != that )
-      //     {
-      //       var offset = 20;
-      //       if ($(that).css("left") != "auto")
-      //         offset += parseInt($(that).css("left"));
-      //       if (!$(this).is(":visible"))
-      //         $(this).slideToggle(200);//.hide();
-      //       $(this).clearQueue();
-      //       $(this).animate({ "left" : offset + "px" }, 50);
-      //       HighlightPost($(this));
-      //     }
-      //   });
-      //   */
-      // });
-
       $("#left-sidebar").click(function(){
         $(".post").each(function(){
           if (!$(this).is(":visible"))
-            $(this).slideToggle(200);//.hide();          
-          //$(this).show();
+            $(this).slideToggle(200);
           $(this).animate({ "left" : "0px" }, 50);
         });
       });
@@ -218,6 +172,14 @@
           '</form>').submit();
       });
 
+      $(".delete-post").click(function(e){
+        $(this).parent().parent().slideToggle(200, function(){
+          $('<form action="/#footer" method="POST">' + 
+            '<input type="hidden" name="delete-post" value="' + $(this).attr('data-id') + '">' +
+            '</form>').submit();
+        })
+      })
+
     });
   </script>
 
@@ -232,9 +194,10 @@
 
   <div id="content">
     % for item in pages:
-    <div class="post" id="post-${item.id}" data-id="${item.id}">
+    <div class="post" id="post-${item.id}" data-id="${item.id}">      
       <div class="post-header">
           <a class="post-anchor" name="${item.id}">${item.id}</a>
+          <div class="delete-post" data-id="${item.id}">X</div>
       </div>
       <div class="post-content">
         ${item.formatted_text or u'' | n}

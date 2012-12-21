@@ -40,12 +40,20 @@ def view_thread(request):
 
     if 'form.submitted' in request.params:
         post = Post(request.params['body'])
-        if format_post(post):
-            DBSession.add(post)
+        DBSession.add(post)
+        DBSession.flush()
+        if not format_post(post):
+            DBSession.delete(post)
         return HTTPFound(location = '/#footer')
 
     if 'reformat-posts' in request.params:
         reformat_posts()
+        return HTTPFound(location = '/#footer')
+
+    if 'delete-post' in request.params:
+        id = request.params['delete-post']
+        post = DBSession.query(Post).filter_by(id = id).one()
+        DBSession.delete(post)
         return HTTPFound(location = '/#footer')
 
     content = DBSession.query(Post).all()
