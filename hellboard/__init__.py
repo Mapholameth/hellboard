@@ -14,7 +14,11 @@ def main(global_config, **settings):
     Base.metadata.bind = engine
     config = Configurator(settings=settings)
     config.add_static_view('static', 'static', cache_max_age=3600)
-    config.add_route('view_thread', '/')
+    config.add_route('view_root', '/')
+    config.add_route('view_board', '/{board}')
+    config.add_route('view_thread', '/{board}/{thread}')
+    config.add_route('view_post', '/{board}/{thread}/{post}')
+    #config.add_route('')
     config.scan()
     return config.make_wsgi_app()
 

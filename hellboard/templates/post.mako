@@ -176,7 +176,7 @@
         });
       });
 
-      $("a.post-anchor").click(function(e){
+      $("a.post-anchor").click(function(){
         $("textarea[name=body]").append(">>" + $(this).html() + " ");
         $(".postform").insertAfter($(this).parent().parent());
         e.stopPropagation();        

@@ -11,6 +11,8 @@ from pyramid.view import view_config
 from .models import (
     DBSession,
     Post,
+    Thread,
+    Board,
     )
 
 from markupsafe import Markup, escape, soft_unicode
@@ -35,8 +37,29 @@ def reformat_posts():
     for post in content:
         format_post(post)
 
+@view_config(route_name = 'view_root', renderer = 'root.mako')
+def view_root(request):
+    boards = DBSession.query(Board).all()
+    return dict(boards = boards)
+
+@view_config(route_name = 'view_board', renderer = 'board.mako')
+def view_board(request):
+    boardName = request.matchdict['board']
+    board = DBSession.query(Board).filter_by(name = boardName).one()
+    threads = DBSession.query(Thread).filter_by(boardId = board.id).all()
+    print(threads)
+    content = []
+    for item in threads:
+        posts = DBSession.query(Post).filter_by(threadId = item.id).all()
+        print(posts)
+        content = content + posts
+    print(content)
+    return dict(threads = content)
+
 @view_config(route_name = 'view_thread', renderer = 'thread.mako')
 def view_thread(request):
+    board = DBSession.query(Board).filter_by(name = request.matchdict['board']).one()
+    thread = DBSession.query(Thread).filter_by(id = request.matchdict['thread']).one()    
 
     if 'form.submitted' in request.params:
         post = Post(request.params['body'])
@@ -56,6 +79,10 @@ def view_thread(request):
         DBSession.delete(post)
         return HTTPFound(location = '/#footer')
 
-    content = DBSession.query(Post).all()
+    content = DBSession.query(Post).filter_by(threadId = thread.id, boardId = board.id).all()
 
     return dict(pages = content)
+
+@view_config(route_name = 'view_post', renderer = 'post.mako')
+def view_post(request):
+    return dict()

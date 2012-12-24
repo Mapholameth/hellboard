@@ -214,7 +214,7 @@
   </div>
 
   <div id="content">
-    % for item in pages:
+    % for item in threads:
     <div class="post" id="post-${item.id}" data-id="${item.id}">      
       <div class="post-header">
           <a class="post-anchor" name="${item.id}">${item.id}</a>

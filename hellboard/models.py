@@ -19,9 +19,33 @@ Base = declarative_base()
 class Post(Base):
     """Textboard post"""
     __tablename__ = 'posts'
+    __table_args__ = {'sqlite_autoincrement': True}
     id = Column(Integer, primary_key=True, unique = True)
     text = Column(Text)
     formatted_text = Column(Text)
-    def __init__(self, text):
+    threadId = Column(Integer, nullable = False)
+    boardId = Column(Integer, nullable = False)
+    def __init__(self, text, boardId, threadId):
         self.text = text
         self.formatted_text = ''
+        self.threadId = threadId
+        self.boardId = boardId
+
+class Thread(Base):
+    """Board Thread"""
+    __tablename__ = 'threads'
+    __table_args__ = {'sqlite_autoincrement': True}
+    id = Column(Integer, primary_key=True, unique = True)
+    boardId = Column(Integer, nullable = False)
+    opPostId = Column(Integer)
+    def __init__(self, boardId):
+        self.boardId = boardId
+
+class Board(Base):
+    """Board board"""
+    __tablename__ = 'boards'
+    __table_args__ = {'sqlite_autoincrement': True}
+    id = Column(Integer, primary_key=True, unique = True)
+    name = Column(Text, nullable=False, unique = True)
+    def __init__(self, name):
+        self.name = name

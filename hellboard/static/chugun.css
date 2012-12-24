@@ -83,6 +83,12 @@ div.post {
   box-shadow:         0px 0px 8px rgba(0, 0, 0, 0.3);
 }
 
+div.post:hover {
+  -webkit-box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.6);
+  -moz-box-shadow:    0px 0px 16px rgba(0, 0, 0, 0.6);
+  box-shadow:         0px 0px 16px rgba(0, 0, 0, 0.6);
+}
+
 div.post-content {
   padding-right: 5px;
   padding-left: 0px;

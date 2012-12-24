@@ -13,6 +13,8 @@ from ..models import (
     DBSession,
     Post,
     Base,
+    Thread,
+    Board,
     )
 
 def usage(argv):
@@ -31,5 +33,16 @@ def main(argv=sys.argv):
     DBSession.configure(bind=engine)
     Base.metadata.create_all(engine)
     with transaction.manager:
-        model = Post('This is the test post')
-        DBSession.add(model)
+        boardB = Board('b')
+        boardBB = Board('bb')
+        boardD = Board('d')
+        DBSession.add(boardB)
+        DBSession.add(boardBB)
+        DBSession.add(boardD)
+        DBSession.flush()
+        thread = Thread(boardB.id)
+        DBSession.add(thread)
+        DBSession.flush()
+        post = Post(u"testPost", boardB.id, thread.id)
+        DBSession.add(post)
+        DBSession.flush()
