@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import sys
 import transaction
@@ -33,9 +34,9 @@ def main(argv=sys.argv):
     DBSession.configure(bind=engine)
     Base.metadata.create_all(engine)
     with transaction.manager:
-        boardB = Board('b')
-        boardBB = Board('bb')
-        boardD = Board('d')
+        boardB = Board(u'b', u'Бред', u'Random shit. You may post anything you like.')
+        boardBB = Board(u'bb', u'Бред+', u'Same as /b but hidden.')
+        boardD = Board(u'd', u'А/d/министрация', u'Общение с администрацией сайта.')
         DBSession.add(boardB)
         DBSession.add(boardBB)
         DBSession.add(boardD)

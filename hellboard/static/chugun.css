@@ -1,3 +1,25 @@
+div.navigation {
+
+}
+
+div.navigation a {
+  -webkit-user-select: none; /* Chrome/Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+ */
+  -o-user-select: none;
+  user-select: none;
+  cursor: hand;
+  cursor: pointer;  
+  font: bold 18px Sans-Serif;
+  color: #333;
+  text-align: left;
+  text-shadow: rgba(255, 255, 255, 0.5) 0px 1px 0px;  
+}
+
+div.navigation a:hover {
+  color: #fff;
+}
+
 div.post-header {
   padding-left: 5px;
   position: relative;  
@@ -162,7 +184,7 @@ div#left-sidebar {
   position:absolute;
   top:0;
   left:0;
-  width:20%;
+  padding-right: 20px;
   height:100%;
   background-color: #bfdc7a;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#bfdc7a), to(#8ebf45)); 
@@ -174,6 +196,7 @@ div#left-sidebar {
   -webkit-box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.3);
   -moz-box-shadow:    0px 0px 3px rgba(0, 0, 0, 0.3);
   box-shadow:         0px 0px 3px rgba(0, 0, 0, 0.3);
+  display: inline-block;
 }
 
 @media screen {

@@ -20,7 +20,7 @@ class Post(Base):
     """Textboard post"""
     __tablename__ = 'posts'
     __table_args__ = {'sqlite_autoincrement': True}
-    id = Column(Integer, primary_key=True, unique = True)
+    id = Column(Integer, primary_key=True)
     text = Column(Text)
     formatted_text = Column(Text)
     threadId = Column(Integer, nullable = False)
@@ -35,7 +35,7 @@ class Thread(Base):
     """Board Thread"""
     __tablename__ = 'threads'
     __table_args__ = {'sqlite_autoincrement': True}
-    id = Column(Integer, primary_key=True, unique = True)
+    id = Column(Integer, primary_key=True)
     boardId = Column(Integer, nullable = False)
     opPostId = Column(Integer)
     def __init__(self, boardId):
@@ -45,7 +45,11 @@ class Board(Base):
     """Board board"""
     __tablename__ = 'boards'
     __table_args__ = {'sqlite_autoincrement': True}
-    id = Column(Integer, primary_key=True, unique = True)
+    id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False, unique = True)
-    def __init__(self, name):
+    title = Column(Text, nullable=False)
+    description = Column(Text, nullable=False)
+    def __init__(self, name, title, description):
         self.name = name
+        self.title = title
+        self.description = description

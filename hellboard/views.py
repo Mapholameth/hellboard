@@ -44,22 +44,25 @@ def view_root(request):
 
 @view_config(route_name = 'view_board', renderer = 'board.mako')
 def view_board(request):
-    boardName = request.matchdict['board']
+    boards = DBSession.query(Board).all()
+    boardName = request.matchdict['board']    
     board = DBSession.query(Board).filter_by(name = boardName).one()
     threads = DBSession.query(Thread).filter_by(boardId = board.id).all()
-    print(threads)
     content = []
     for item in threads:
         posts = DBSession.query(Post).filter_by(threadId = item.id).all()
-        print(posts)
-        content = content + posts
-    print(content)
-    return dict(threads = content)
+        newThread = dict()
+        newThread['thread'] = item
+        newThread['posts'] = posts
+        print(newThread)
+        content = content + [ newThread ]
+    return dict(threads = content, boards = boards)
 
 @view_config(route_name = 'view_thread', renderer = 'thread.mako')
 def view_thread(request):
+    boards = DBSession.query(Board).all()
     board = DBSession.query(Board).filter_by(name = request.matchdict['board']).one()
-    thread = DBSession.query(Thread).filter_by(id = request.matchdict['thread']).one()    
+    thread = DBSession.query(Thread).filter_by(id = request.matchdict['thread']).one()
 
     if 'form.submitted' in request.params:
         post = Post(request.params['body'])
@@ -81,8 +84,12 @@ def view_thread(request):
 
     content = DBSession.query(Post).filter_by(threadId = thread.id, boardId = board.id).all()
 
-    return dict(pages = content)
+    return dict(posts = content, boards = boards)
 
 @view_config(route_name = 'view_post', renderer = 'post.mako')
 def view_post(request):
-    return dict()
+    boards = DBSession.query(Board).all()
+    board = DBSession.query(Board).filter_by(name = request.matchdict['board']).one()
+    thread = DBSession.query(Thread).filter_by(id = request.matchdict['thread']).one()
+    post = DBSession.query(Post).filter_by(id = request.matchdict['post']).all()    
+    return dict(posts = post, boards = boards)
