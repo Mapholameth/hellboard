@@ -17,7 +17,18 @@ from .models import (
 
 from markupsafe import Markup, escape, soft_unicode
 
+from sqlalchemy.orm.exc import NoResultFound
+
+from sqlalchemy import desc
+
 re_match_urls = re.compile(ur"""((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[. ][a-z]{2,4}/)(?:[^\s()<>]+|(([^\s()<>]+|(([^\s()<>]+)))*))+(?:(([^\s()<>]+|( ([^\s()<>]+)))*)|[^\s`!()[]{};:'".,<>?«»“”‘’]))""", re.DOTALL | re.UNICODE)
+
+# temp snippet for get utc unix timestamp
+# from datetime import datetime
+# import calendar
+# calendar.timegm(datetime.utcnow().utctimetuple())
+# utc unixtimestamp interpolated with milliseconds
+# unicode(calendar.timegm(datetime.utcnow().utctimetuple())) + unicode(datetime.utcnow().microsecond/1000)
 
 def format_post(post):
     text = post.text
@@ -33,20 +44,25 @@ def format_post(post):
     return True
 
 def reformat_posts():
-    content = DBSession.query(Post).all()
+    content = Post.GetAllPosts()
     for post in content:
         format_post(post)
 
 @view_config(route_name = 'view_root', renderer = 'root.mako')
 def view_root(request):
-    boards = DBSession.query(Board).all()
+    boards = Board.GetAll()
     return dict(boards = boards)
 
 @view_config(route_name = 'view_board', renderer = 'board.mako')
 def view_board(request):
-    boards = DBSession.query(Board).all()
-    boardName = request.matchdict['board']    
-    board = DBSession.query(Board).filter_by(name = boardName).one()
+    boards = Board.GetAll()
+    boardName = request.matchdict['board']
+
+    try:
+        board = DBSession.query(Board).filter_by(name = boardName).one()
+    except NoResultFound:
+        return HTTPNotFound()
+
     threads = DBSession.query(Thread).filter_by(boardId = board.id).all()
     content = []
     for item in threads:
@@ -54,42 +70,48 @@ def view_board(request):
         newThread = dict()
         newThread['thread'] = item
         newThread['posts'] = posts
-        print(newThread)
         content = content + [ newThread ]
     return dict(threads = content, boards = boards)
 
 @view_config(route_name = 'view_thread', renderer = 'thread.mako')
 def view_thread(request):
     boards = DBSession.query(Board).all()
-    board = DBSession.query(Board).filter_by(name = request.matchdict['board']).one()
-    thread = DBSession.query(Thread).filter_by(id = request.matchdict['thread']).one()
+    try:
+        board = DBSession.query(Board).filter_by(name = request.matchdict['board']).one()
+        thread = DBSession.query(Thread).filter_by(id = request.matchdict['thread']).one()
+    except NoResultFound:
+        return HTTPNotFound()
+
+    url = request.route_url('view_thread', board = board.name, thread = unicode(thread.id))
 
     if 'form.submitted' in request.params:
-        post = Post(request.params['body'])
+        post = Post(request.params['body'], board.id, thread.id)
         DBSession.add(post)
         DBSession.flush()
         if not format_post(post):
             DBSession.delete(post)
-        return HTTPFound(location = '/#footer')
+        return HTTPFound(location = url)
 
     if 'reformat-posts' in request.params:
         reformat_posts()
-        return HTTPFound(location = '/#footer')
+        return HTTPFound(location = url)
 
     if 'delete-post' in request.params:
         id = request.params['delete-post']
         post = DBSession.query(Post).filter_by(id = id).one()
         DBSession.delete(post)
-        return HTTPFound(location = '/#footer')
+        return HTTPFound(location = url)
 
-    content = DBSession.query(Post).filter_by(threadId = thread.id, boardId = board.id).all()
+    content = DBSession.query(Post).filter_by(threadId = thread.id, boardId = board.id).order_by(Post.id).all()
 
     return dict(posts = content, boards = boards)
 
-@view_config(route_name = 'view_post', renderer = 'post.mako')
+@view_config(route_name = 'view_post', renderer = 'thread.mako')
 def view_post(request):
     boards = DBSession.query(Board).all()
     board = DBSession.query(Board).filter_by(name = request.matchdict['board']).one()
     thread = DBSession.query(Thread).filter_by(id = request.matchdict['thread']).one()
-    post = DBSession.query(Post).filter_by(id = request.matchdict['post']).all()    
+    post = DBSession.query(Post).filter_by(id = request.matchdict['post']).all()
+    if len(post) == 0:
+        return HTTPNotFound()
     return dict(posts = post, boards = boards)

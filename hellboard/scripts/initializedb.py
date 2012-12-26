@@ -37,6 +37,7 @@ def main(argv=sys.argv):
         boardB = Board(u'b', u'Бред', u'Random shit. You may post anything you like.')
         boardBB = Board(u'bb', u'Бред+', u'Same as /b but hidden.')
         boardD = Board(u'd', u'А/d/министрация', u'Общение с администрацией сайта.')
+        boardSearch = Board(u'seach', u'Horoshii poisk', u'Ishchushchii da obryashchet')
         DBSession.add(boardB)
         DBSession.add(boardBB)
         DBSession.add(boardD)

@@ -20,6 +20,10 @@ div.navigation a:hover {
   color: #fff;
 }
 
+div.navigation ul {
+  padding-left: 20px;
+}
+
 div.post-header {
   padding-left: 5px;
   position: relative;  
@@ -58,8 +62,12 @@ div.post-header > a:hover {
   color: #fff;
 }
 
+.post-header-block {
+  display: inline-block;
+  width: 33%;
+}
+
 .delete-post {
-  float: right;
   -webkit-user-select: none; /* Chrome/Safari */        
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+ */
@@ -184,6 +192,8 @@ div#left-sidebar {
   position:absolute;
   top:0;
   left:0;
+  padding-top: 20px;
+  padding-left: 20px;
   padding-right: 20px;
   height:100%;
   background-color: #bfdc7a;

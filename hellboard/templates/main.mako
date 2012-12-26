@@ -32,6 +32,7 @@
 
   <div id="left-sidebar">
     <div class="navigation">
+      <a href="/">Главня страница</a>
       <ul>
         % for item in boards:
           <li>

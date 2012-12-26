@@ -1,4 +1,4 @@
-<%include file="main.mako"/>
+<%inherit file="main.mako"/>
 
 <%block name="content">
   <%namespace name="post" file="post.mako"/>
