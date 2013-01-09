@@ -1,11 +1,7 @@
 var UTCtoLocalTime = function(utcTime)
 {
-  // var date = new Date("December 17, 1995 03:24:00");
-  // date.toLocaleString()
-  // offset = new Date()
-  // offset.setMinutes(offset.getTimezoneOffset)
-  // date = date - offset
-  return utcTime//date//Date(utcTime)
+  var date = new Date(parseInt(utcTime)*1000);
+  return date.toLocaleString();
 }
 
 var HighlightPost = function(post)
