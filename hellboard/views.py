@@ -35,7 +35,7 @@ def format_post(post):
     text = re.sub(ur'\r\n', ur'\\r\\n', text)
     text = unicode(escape(text))
     text = re.sub(ur'\\r\\n', ur'<br/>', text)
-    text = re.sub(ur'(.*?)(&gt;&gt;)([\d]+)(.*?)', ur'\1<a class="post-link" data-parent-id="%(id)s" data-target-id="\3" href = "/#\3">\2\3</a>\4', text, re.UNICODE)
+    text = re.sub(ur'(.*?)(&gt;&gt;)([\d]+)(.*?)', ur'\1<a class="post-link" data-parent-id="%(id)s" data-target-id="\3" href = "/#\3">\2\3</a>\4', text, flags = re.UNICODE)
     text = text % dict(id=post.id)
     text = re_match_urls.sub(lambda x: u'<a href="%(url)s">%(url)s</a>' % dict(url=unicode(x.group())), text)
     if text == u"":

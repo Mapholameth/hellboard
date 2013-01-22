@@ -165,16 +165,18 @@ $(document).ready(function(){
   });
 
   $("#reformat-posts").click(function(e){
-    $('<form action="/#footer" method="POST">' + 
-      '<input type="hidden" name="reformat-posts" value="">' +
-      '</form>').submit();
+    $('<form action="/#footer" method="POST">'
+      + '<input type="hidden" name="reformat-posts" value="">'
+      + '</form>').submit();
   });
 
   $(".delete-post").click(function(e){
     $(this).parent().parent().slideToggle(200, function(){
-      $('<form action="/#footer" method="POST">' + 
-        '<input type="hidden" name="delete-post" value="' + $(this).attr('data-id') + '">' +
-        '</form>').submit();
+      $('<form action="/#footer" method="POST">'
+        + '<input type="hidden" name="delete-post" value="'
+        + $(this).attr('data-id')
+        + '">'
+        + '</form>').submit();
     })
   })
 

@@ -185,7 +185,7 @@ a.down-link {
 
 body {
   margin: 0;
-  padding: 0 0 0 <length>;
+  padding: 0 0 0 500;
 }
 
 div#left-sidebar {

@@ -7,5 +7,6 @@
     <p>Хотя на самом деле, это рандомный тестовый текст, вместо главной страницы.</p>
     <p>Охуеть, да я же только что удалённо изменил страницу через самбу, протуннеллированную через ssh.</p>
     <p>И ещё раз.</p>
+    <p>If you see this, then my second virtual machine -> ubuntu server -> samba -> windows8 -> sublime text 2 file modification is forking fine</p>
   </div>
 </%block>
