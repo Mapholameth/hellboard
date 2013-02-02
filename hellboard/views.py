@@ -21,7 +21,9 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from sqlalchemy import desc
 
-re_match_urls = re.compile(ur"""((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[. ][a-z]{2,4}/)(?:[^\s()<>]+|(([^\s()<>]+|(([^\s()<>]+)))*))+(?:(([^\s()<>]+|( ([^\s()<>]+)))*)|[^\s`!()[]{};:'".,<>?«»“”‘’]))""", re.DOTALL | re.UNICODE)
+re_match_urls = re.compile(ur"""(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))""", re.DOTALL | re.UNICODE)
+
+#(([(]*)(?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[. ][a-z]{2,4}/)(?:[^\s()<>]+|(([^\s()<>]+|(([^\s()<>]+)))*))+(?:(([^\s()<>]+|( ([^\s()<>]+)))*)|[^\s`!()[]{};:'".,<>?«»“”‘’]))
 
 # temp snippet for get utc unix timestamp
 # from datetime import datetime
@@ -35,16 +37,34 @@ def format_post(post):
     text = re.sub(ur'\r\n', ur'\\r\\n', text)
     text = unicode(escape(text))
     text = re.sub(ur'\\r\\n', ur'<br/>', text)
-    text = re.sub(ur'(.*?)(&gt;&gt;)([\d]+)(.*?)', ur'\1<a class="post-link" data-parent-id="%(id)s" data-target-id="\3" href = "/#\3">\2\3</a>\4', text, flags = re.UNICODE)
-    text = text % dict(id=post.id)
-    text = re_match_urls.sub(lambda x: u'<a href="%(url)s">%(url)s</a>' % dict(url=unicode(x.group())), text)
+    text = re.sub(ur'(.*?)(&gt;&gt;)([\d]+)(.*?)', ur'\1<a class="post-link" data-parent-id="' + unicode(post.id) + ur'" data-target-id="\3" href = "/#\3">\2\3</a>\4', text, flags = re.UNICODE)
+
+    def url_match_process_group(group):
+        head = u""
+        tail = u""
+        body = group
+
+        # m = re.match(ur"^([(]*)(.*)", body, flags = re.DOTALL | re.UNICODE)
+        # if m != None:
+        #     head += m.group(1)
+        #     body = m.group(2)
+
+        # m = re.match(ur"(.*)([.,?!])$", body, flags = re.DOTALL | re.UNICODE)
+        # if m != None:
+        #     tail = m.group(2) + tail
+        #     body = m.group(1)
+
+        return dict(head = head, url = body, tail = tail)
+
+    text = re_match_urls.sub(lambda x: u'%(head)s<a href="%(url)s">%(url)s</a>%(tail)s' % url_match_process_group(unicode(x.group())), text)
+
     if text == u"":
         return False
     post.formatted_text = text
     return True
 
 def reformat_posts():
-    content = Post.GetAllPosts()
+    content = Post.GetAll()
     for post in content:
         format_post(post)
 
